@@ -81,7 +81,7 @@ public final class QrSegment {
 		BitBuffer bb = new BitBuffer();
 		for (int i = 0; i < digits.length(); ) {  // Consume up to 3 digits per iteration
 			int n = Math.min(digits.length() - i, 3);
-			bb.appendBits(Integer.parseInt(digits.substring(i, i + n)), n * 3 + 1);
+			bb.appendBits(Integer.parseUnsignedInt(digits.substring(i, i + n)), n * 3 + 1);
 			i += n;
 		}
 		return new QrSegment(Mode.NUMERIC, digits.length(), bb);
@@ -105,12 +105,18 @@ public final class QrSegment {
 		BitBuffer bb = new BitBuffer();
 		int i;
 		for (i = 0; i <= text.length() - 2; i += 2) {  // Process groups of 2
-			int temp = ALPHANUMERIC_CHARSET.indexOf(text.charAt(i)) * 45;
-			temp += ALPHANUMERIC_CHARSET.indexOf(text.charAt(i + 1));
+			//indexOf return type is treated as unsigned. I think it should not be treated as such
+			@SuppressWarnings("signedness")
+			@Unsigned int temp = ALPHANUMERIC_CHARSET.indexOf(text.charAt(i)) * 45+ALPHANUMERIC_CHARSET.indexOf(text.charAt(i + 1));
 			bb.appendBits(temp, 11);
 		}
 		if (i < text.length())  // 1 character remaining
-			bb.appendBits(ALPHANUMERIC_CHARSET.indexOf(text.charAt(i)), 6);
+		{
+			//indexOf return type is treated as unsigned. I think it should not be treated as such
+			@SuppressWarnings("signedness")
+			@Unsigned int t= ALPHANUMERIC_CHARSET.indexOf(text.charAt(i));
+			bb.appendBits(t, 6);
+		}
 		return new QrSegment(Mode.ALPHANUMERIC, text.length(), bb);
 	}
 	
@@ -278,7 +284,7 @@ public final class QrSegment {
 		
 		/*-- Constructor --*/
 		
-		private Mode(int mode, int... ccbits) {
+		private Mode(@Unsigned int mode, int... ccbits) {
 			modeBits = mode;
 			numBitsCharCount = ccbits;
 		}
