@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+import org.checkerframework.checker.signedness.qual.*;
 
 public final class QrCodeGeneratorWorker {
 	
@@ -68,8 +69,11 @@ public final class QrCodeGeneratorWorker {
 		int errCorLvl  = input.nextInt();
 		int minVersion = input.nextInt();
 		int maxVersion = input.nextInt();
-		int mask       = input.nextInt();
-		int boostEcl   = input.nextInt();
+		//Annotation of Scanner class is needed in the JDK
+		@SuppressWarnings("signedness")
+		@Unsigned int mask       = input.nextInt();
+		@SuppressWarnings("signedness")
+		@Unsigned int boostEcl   = input.nextInt();
 		if (!(0 <= errCorLvl && errCorLvl <= 3) || !(-1 <= mask && mask <= 7) || (boostEcl >>> 1) != 0
 				|| !(QrCode.MIN_VERSION <= minVersion && minVersion <= maxVersion && maxVersion <= QrCode.MAX_VERSION))
 			throw new RuntimeException();
