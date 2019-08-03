@@ -1,0 +1,22 @@
+This repo contains the Annotated and unannotated version of nayuki/QR-Code-generator
+
+Annotated version is on branch case_study, Unannotated version is on master.
+
+It is better to compile files indivisually as there are errors in files.
+
+Commands-
+
+```
+cd QR-Code-generator/java/src/main/java
+javac -processor signedness io/nayuki/qrcodegen/"Filename".java
+```
+
+In this case study I learnt that signedness checker is weak in some classes and needs enhancements such as:-
+
+1.)Non equality comparisons of unsigned values
+2.)Scanner.java(Annotation needed in theJDK)
+
+
+When you will run the test file using signedness checker you will get many errors(I have not wriiten some in the doumnetation as there are many) of-
+
+1.)Non equality comparisons of unsigned values
