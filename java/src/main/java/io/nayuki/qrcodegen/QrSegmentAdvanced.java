@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Objects;
 import io.nayuki.qrcodegen.QrSegment.Mode;
 
+import org.checkerframework.checker.signedness.qual.*;
 
 /**
  * Splits text into optimal segments and encodes kanji segments.
@@ -255,7 +256,7 @@ public final class QrSegmentAdvanced {
 		Objects.requireNonNull(text);
 		BitBuffer bb = new BitBuffer();
 		text.chars().forEachOrdered(c -> {
-			int val = UNICODE_TO_QR_KANJI[c];
+			@Unsigned int val = UNICODE_TO_QR_KANJI[c];
 			if (val == -1)
 				throw new IllegalArgumentException("String contains non-kanji-mode characters");
 			bb.appendBits(val, 13);
@@ -401,7 +402,7 @@ public final class QrSegmentAdvanced {
 		"/////////////////////////////////////////////w==";
 	
 	
-	private static short[] UNICODE_TO_QR_KANJI = new short[1 << 16];
+	private static @Unsigned short[] UNICODE_TO_QR_KANJI = new short[1 << 16];
 	
 	static {  // Unpack the Shift JIS table into a more computation-friendly form
 		Arrays.fill(UNICODE_TO_QR_KANJI, (short)-1);

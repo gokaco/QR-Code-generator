@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.checkerframework.checker.signedness.qual.*;
 
 /**
  * A segment of character/binary/control data in a QR Code symbol.
@@ -171,7 +172,7 @@ public final class QrSegment {
 	/** The length of this segment's unencoded data. Measured in characters for
 	 * numeric/alphanumeric/kanji mode, bytes for byte mode, and 0 for ECI mode.
 	 * Always zero or positive. Not the same as the data's bit length. */
-	public final int numChars;
+	public final @Unsigned int numChars;
 	
 	// The data bits of this segment. Not null. Accessed through getData().
 	final BitBuffer data;
@@ -269,7 +270,7 @@ public final class QrSegment {
 		/*-- Fields --*/
 		
 		// The mode indicator bits, which is a uint4 value (range 0 to 15).
-		final int modeBits;
+		final @Unsigned int modeBits;
 		
 		// Number of character count bits for three different version ranges.
 		private final int[] numBitsCharCount;

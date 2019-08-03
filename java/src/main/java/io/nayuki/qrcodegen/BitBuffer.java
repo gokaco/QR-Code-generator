@@ -26,6 +26,7 @@ package io.nayuki.qrcodegen;
 import java.util.BitSet;
 import java.util.Objects;
 
+import org.checkerframework.checker.signedness.qual.*;
 
 /**
  * An appendable sequence of bits (0s and 1s). Mainly used by {@link QrSegment}.
@@ -70,7 +71,7 @@ public final class BitBuffer implements Cloneable {
 	 * @return the bit at the specified index
 	 * @throws IndexOutOfBoundsException if index &lt; 0 or index &#x2265; bitLength
 	 */
-	public int getBit(int index) {
+	public @Unsigned int getBit(int index) {
 		if (index < 0 || index >= bitLength)
 			throw new IndexOutOfBoundsException();
 		return data.get(index) ? 1 : 0;
@@ -86,7 +87,7 @@ public final class BitBuffer implements Cloneable {
 	 * @throws IllegalStateException if appending the data
 	 * would make bitLength exceed Integer.MAX_VALUE
 	 */
-	public void appendBits(int val, int len) {
+	public void appendBits(@Unsigned int val, int len) {
 		if (len < 0 || len > 31 || val >>> len != 0)
 			throw new IllegalArgumentException("Value out of range");
 		if (Integer.MAX_VALUE - bitLength < len)
