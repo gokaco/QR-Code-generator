@@ -256,6 +256,8 @@ public final class QrSegmentAdvanced {
 		Objects.requireNonNull(text);
 		BitBuffer bb = new BitBuffer();
 		text.chars().forEachOrdered(c -> {
+			//UNICODE_TO_QR_KANJI should be treated as Signed as the array is filled by -1.
+			@SuppressWarnings("signedness")
 			@Unsigned int val = UNICODE_TO_QR_KANJI[c];
 			if (val == -1)
 				throw new IllegalArgumentException("String contains non-kanji-mode characters");
@@ -402,7 +404,7 @@ public final class QrSegmentAdvanced {
 		"/////////////////////////////////////////////w==";
 	
 	
-	private static @Unsigned short[] UNICODE_TO_QR_KANJI = new short[1 << 16];
+	private static short[] UNICODE_TO_QR_KANJI = new short[1 << 16];
 	
 	static {  // Unpack the Shift JIS table into a more computation-friendly form
 		Arrays.fill(UNICODE_TO_QR_KANJI, (short)-1);

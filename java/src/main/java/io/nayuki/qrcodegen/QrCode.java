@@ -606,6 +606,7 @@ public final class QrCode {
 		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
 		 * Therefore error is suppressed.
 		 */
+		@SuppressWarnings("signedness")
 		int mask1=mask;
 		assert 0 <= mask1 && mask1 <= 7;
 		applyMask(mask);  // Apply the final choice of mask
