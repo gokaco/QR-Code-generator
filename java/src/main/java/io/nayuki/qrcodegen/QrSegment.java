@@ -105,14 +105,14 @@ public final class QrSegment {
 		BitBuffer bb = new BitBuffer();
 		int i;
 		for (i = 0; i <= text.length() - 2; i += 2) {  // Process groups of 2
-			//indexOf return type is treated as unsigned. I think it should not be treated as such
+			//indexOf return type is treated as unsigned. It should not be treated as such.
 			@SuppressWarnings("signedness")
 			@Unsigned int temp = ALPHANUMERIC_CHARSET.indexOf(text.charAt(i)) * 45+ALPHANUMERIC_CHARSET.indexOf(text.charAt(i + 1));
 			bb.appendBits(temp, 11);
 		}
 		if (i < text.length())  // 1 character remaining
 		{
-			//indexOf return type is treated as unsigned. I think it should not be treated as such
+			//indexOf return type is treated as unsigned. It should not be treated as such.
 			@SuppressWarnings("signedness")
 			@Unsigned int t= ALPHANUMERIC_CHARSET.indexOf(text.charAt(i));
 			bb.appendBits(t, 6);
