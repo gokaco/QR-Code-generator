@@ -69,7 +69,7 @@ public final class QrCodeGeneratorWorker {
 		int errCorLvl  = input.nextInt();
 		int minVersion = input.nextInt();
 		int maxVersion = input.nextInt();
-		//Annotation of Scanner class is needed in the JDK
+		//Annotation of nextInt() in Scanner class is needed in the JDK. Then this error e=would not occur.
 		@SuppressWarnings("signedness")
 		@Unsigned int mask       = input.nextInt();
 		@SuppressWarnings("signedness")
