@@ -10,8 +10,21 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<checkerframework.checkers>org.checkerframework.checker.index.IndexChecker,org.checkerframework.checker.nullness.NullnessChecker,org.checkerframework.checker.signedness.SignednessChecker
+		</checkerframework.checkers>
 	</properties>
-	
+	<dependencies>
+	 <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
+      <version>2.10.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>jdk8</artifactId>
+      <version>2.10.0</version>
+    </dependency>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>

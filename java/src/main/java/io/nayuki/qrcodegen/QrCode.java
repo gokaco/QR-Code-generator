@@ -145,7 +145,13 @@ public final class QrCode {
 	public static QrCode encodeSegments(List<QrSegment> segs, Ecc ecl, int minVersion, int maxVersion, @Unsigned int mask, boolean boostEcl) {
 		Objects.requireNonNull(segs);
 		Objects.requireNonNull(ecl);
-		if (!(MIN_VERSION <= minVersion && minVersion <= maxVersion && maxVersion <= MAX_VERSION) || mask < -1 || mask > 7)
+		/**
+		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework
+		 * Therefore error is suppressed.
+		 */
+		@SuppressWarnings("signedness")
+		int mask1=mask;
+		if (!(MIN_VERSION <= minVersion && minVersion <= maxVersion && maxVersion <= MAX_VERSION) || mask1 < -1 || mask1 > 7)
 			throw new IllegalArgumentException("Invalid value");
 		
 		// Find the minimal version number to use
@@ -251,7 +257,13 @@ public final class QrCode {
 		// Check arguments and initialize fields
 		if (ver < MIN_VERSION || ver > MAX_VERSION)
 			throw new IllegalArgumentException("Version value out of range");
-		if (mask < -1 || mask > 7)
+		/**
+		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
+		 * Therefore error is suppressed.
+		 */
+		@SuppressWarnings("signedness")
+		int mask1=mask;
+		if (mask1 < -1 || mask1 > 7)
 			throw new IllegalArgumentException("Mask value out of range");
 		version = ver;
 		size = ver * 4 + 17;
@@ -545,7 +557,13 @@ public final class QrCode {
 	// the same mask value a second time will undo the mask. A final well-formed
 	// QR Code needs exactly one (not zero, two, etc.) mask applied.
 	private void applyMask(@Unsigned int mask) {
-		if (mask < 0 || mask > 7)
+		/**
+		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
+		 * Therefore error is suppressed.
+		 */
+		@SuppressWarnings("signedness")
+		int mask1=mask;
+		if (mask1 < 0 || mask1 > 7)
 			throw new IllegalArgumentException("Mask value out of range");
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
@@ -584,7 +602,12 @@ public final class QrCode {
 				applyMask(i);  // Undoes the mask due to XOR
 			}
 		}
-		assert 0 <= mask && mask <= 7;
+		/**
+		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
+		 * Therefore error is suppressed.
+		 */
+		int mask1=mask;
+		assert 0 <= mask1 && mask1 <= 7;
 		applyMask(mask);  // Apply the final choice of mask
 		drawFormatBits(mask);  // Overwrite old format bits
 		return mask;  // The caller shall assign this value to the final-declared field

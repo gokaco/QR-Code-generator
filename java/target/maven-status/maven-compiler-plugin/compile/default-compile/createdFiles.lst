@@ -1,0 +1,9 @@
+io/nayuki/qrcodegen/QrCodeGeneratorDemo.class
+io/nayuki/qrcodegen/QrSegment.class
+io/nayuki/qrcodegen/DataTooLongException.class
+io/nayuki/qrcodegen/BitBuffer.class
+io/nayuki/qrcodegen/QrSegmentAdvanced.class
+io/nayuki/qrcodegen/QrCodeGeneratorWorker.class
+io/nayuki/qrcodegen/QrCode$Ecc.class
+io/nayuki/qrcodegen/QrCode.class
+io/nayuki/qrcodegen/QrSegment$Mode.class

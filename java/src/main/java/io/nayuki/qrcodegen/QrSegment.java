@@ -226,7 +226,13 @@ public final class QrSegment {
 		for (QrSegment seg : segs) {
 			Objects.requireNonNull(seg);
 			int ccbits = seg.mode.numCharCountBits(version);
-			if (seg.numChars >= (1 << ccbits))
+			/**
+			 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
+			 * Therefore error is suppressed.
+			 */
+			@SuppressWarnings("signedness")
+			int t=seg.numChars;
+			if (t >= (1 << ccbits))
 				return -1;  // The segment's length doesn't fit the field's bit width
 			result += 4L + ccbits + seg.data.bitLength();
 			if (result > Integer.MAX_VALUE)
