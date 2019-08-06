@@ -70,7 +70,7 @@ public final class QrCodeGeneratorWorker {
 		int minVersion = input.nextInt();
 		int maxVersion = input.nextInt();
 		int mask       = input.nextInt();
-		/*Scanner class is unable to take input as Unsigned here.Therefore erroris occurring.
+		/*Scanner class 'input' is unable to take input as Unsigned here.Therefore error is occurring.
 		  The error will not occur when PR-#2679 will get merged */
 		@SuppressWarnings("signedness")
 		@Unsigned int boostEcl   = input.nextInt();
