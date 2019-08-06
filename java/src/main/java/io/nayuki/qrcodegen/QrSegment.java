@@ -30,6 +30,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.checkerframework.checker.signedness.qual.*;
+import org.checkerframework.common.value.qual.*;
 
 /**
  * A segment of character/binary/control data in a QR Code symbol.
@@ -105,16 +106,16 @@ public final class QrSegment {
 		BitBuffer bb = new BitBuffer();
 		int i;
 		for (i = 0; i <= text.length() - 2; i += 2) {  // Process groups of 2
-			//indexOf return type is treated as unsigned. It should not be treated as such.
-			@SuppressWarnings("signedness")
-			@Unsigned int temp = ALPHANUMERIC_CHARSET.indexOf(text.charAt(i)) * 45+ALPHANUMERIC_CHARSET.indexOf(text.charAt(i + 1));
+			/* Issue #2690*/
+			@SuppressWarnings("value")
+			@IntRange(from=0) int temp = ALPHANUMERIC_CHARSET.indexOf(text.charAt(i)) * 45+ALPHANUMERIC_CHARSET.indexOf(text.charAt(i + 1));
 			bb.appendBits(temp, 11);
 		}
 		if (i < text.length())  // 1 character remaining
 		{
-			//indexOf return type is treated as unsigned. It should not be treated as such.
-			@SuppressWarnings("signedness")
-			@Unsigned int t= ALPHANUMERIC_CHARSET.indexOf(text.charAt(i));
+			/* Issue #2690*/
+			@SuppressWarnings("value")
+			@IntRange(from=0) int t= ALPHANUMERIC_CHARSET.indexOf(text.charAt(i));
 			bb.appendBits(t, 6);
 		}
 		return new QrSegment(Mode.ALPHANUMERIC, text.length(), bb);
@@ -178,7 +179,7 @@ public final class QrSegment {
 	/** The length of this segment's unencoded data. Measured in characters for
 	 * numeric/alphanumeric/kanji mode, bytes for byte mode, and 0 for ECI mode.
 	 * Always zero or positive. Not the same as the data's bit length. */
-	public final @Unsigned int numChars;
+	public final @SignedPositive int numChars;
 	
 	// The data bits of this segment. Not null. Accessed through getData().
 	final BitBuffer data;
@@ -226,13 +227,7 @@ public final class QrSegment {
 		for (QrSegment seg : segs) {
 			Objects.requireNonNull(seg);
 			int ccbits = seg.mode.numCharCountBits(version);
-			/**
-			 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
-			 * Therefore error is suppressed.
-			 */
-			@SuppressWarnings("signedness")
-			int t=seg.numChars;
-			if (t >= (1 << ccbits))
+			if (seg.numChars >= (1 << ccbits))
 				return -1;  // The segment's length doesn't fit the field's bit width
 			result += 4L + ccbits + seg.data.bitLength();
 			if (result > Integer.MAX_VALUE)

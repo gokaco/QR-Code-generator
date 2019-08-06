@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.checkerframework.checker.signedness.qual.*;
+import org.checkerframework.common.value.qual.*;
 
 /**
  * A QR Code symbol, which is a type of two-dimension barcode.
@@ -142,16 +143,11 @@ public final class QrCode {
 	 * @throws DataTooLongException if the segments fail to fit in
 	 * the maxVersion QR Code at the ECL, which means they are too long
 	 */
-	public static QrCode encodeSegments(List<QrSegment> segs, Ecc ecl, int minVersion, int maxVersion, @Unsigned int mask, boolean boostEcl) {
+	public static QrCode encodeSegments(List<QrSegment> segs, Ecc ecl, int minVersion, int maxVersion, int mask, boolean boostEcl) {
 		Objects.requireNonNull(segs);
 		Objects.requireNonNull(ecl);
-		/**
-		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework
-		 * Therefore error is suppressed.
-		 */
-		@SuppressWarnings("signedness")
-		int mask1=mask;
-		if (!(MIN_VERSION <= minVersion && minVersion <= maxVersion && maxVersion <= MAX_VERSION) || mask1 < -1 || mask1 > 7)
+
+		if (!(MIN_VERSION <= minVersion && minVersion <= maxVersion && maxVersion <= MAX_VERSION) || mask < -1 || mask > 7)
 			throw new IllegalArgumentException("Invalid value");
 		
 		// Find the minimal version number to use
@@ -225,7 +221,7 @@ public final class QrCode {
 	/** The index of the mask pattern used in this QR Code, which is between 0 and 7 (inclusive).
 	 * <p>Even if a QR Code is created with automatic masking requested (mask =
 	 * &#x2212;1), the resulting object still has a mask value between 0 and 7. */
-	public final @Unsigned int mask;
+	public final int mask;
 	
 	// Private grids of modules/pixels, with dimensions of size*size:
 	
@@ -253,17 +249,11 @@ public final class QrCode {
 	 * @throws IllegalArgumentException if the version or mask value is out of range,
 	 * or if the data is the wrong length for the specified version and error correction level
 	 */
-	public QrCode(int ver, Ecc ecl, @Unsigned byte[] dataCodewords, @Unsigned int mask) {
+	public QrCode(int ver, Ecc ecl, @Unsigned byte[] dataCodewords, int mask) {
 		// Check arguments and initialize fields
 		if (ver < MIN_VERSION || ver > MAX_VERSION)
 			throw new IllegalArgumentException("Version value out of range");
-		/**
-		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
-		 * Therefore error is suppressed.
-		 */
-		@SuppressWarnings("signedness")
-		int mask1=mask;
-		if (mask1 < -1 || mask1 > 7)
+		if (mask < -1 || mask > 7)
 			throw new IllegalArgumentException("Mask value out of range");
 		version = ver;
 		size = ver * 4 + 17;
@@ -395,7 +385,7 @@ public final class QrCode {
 	
 	// Draws two copies of the format bits (with its own error correction code)
 	// based on the given mask and this object's error correction level field.
-	private void drawFormatBits(@Unsigned int mask) {
+	private void drawFormatBits(@IntRange(from=0, to=7) int mask) {
 		// Calculate error correction code and pack bits
 		@Unsigned int data = errorCorrectionLevel.formatBits << 3 | mask;  // errCorrLvl is uint2, mask is uint3
 		@Unsigned int rem = data;
@@ -556,14 +546,9 @@ public final class QrCode {
 	// before masking. Due to the arithmetic of XOR, calling applyMask() with
 	// the same mask value a second time will undo the mask. A final well-formed
 	// QR Code needs exactly one (not zero, two, etc.) mask applied.
-	private void applyMask(@Unsigned int mask) {
-		/**
-		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
-		 * Therefore error is suppressed.
-		 */
-		@SuppressWarnings("signedness")
-		int mask1=mask;
-		if (mask1 < 0 || mask1 > 7)
+	private void applyMask(int mask) {
+
+		if (mask < 0 || mask > 7)
 			throw new IllegalArgumentException("Mask value out of range");
 		for (int y = 0; y < size; y++) {
 			for (int x = 0; x < size; x++) {
@@ -588,10 +573,10 @@ public final class QrCode {
 	// A messy helper function for the constructor. This QR Code must be in an unmasked state when this
 	// method is called. The given argument is the requested mask, which is -1 for auto or 0 to 7 for fixed.
 	// This method applies and returns the actual mask chosen, from 0 to 7.
-	private @Unsigned int handleConstructorMasking(@Unsigned int mask) {
+	private int handleConstructorMasking(@IntRange(from=-1, to=7) int mask) {
 		if (mask == -1) {  // Automatically choose best mask
 			int minPenalty = Integer.MAX_VALUE;
-			for (@Unsigned int i = 0; i < 8; i++) {
+			for (int i = 0; i < 8; i++) {
 				applyMask(i);
 				drawFormatBits(i);
 				int penalty = getPenaltyScore();
@@ -602,15 +587,10 @@ public final class QrCode {
 				applyMask(i);  // Undoes the mask due to XOR
 			}
 		}
-		/**
-		 * Non equality comparisons are occurring on values treated as unsigned which is prohibited by checker framework.
-		 * Therefore error is suppressed.
-		 */
-		@SuppressWarnings("signedness")
-		int mask1=mask;
-		assert 0 <= mask1 && mask1 <= 7;
-		applyMask(mask);  // Apply the final choice of mask
-		drawFormatBits(mask);  // Overwrite old format bits
+		if (mask >= 0 && mask <= 7){
+			applyMask(mask);  // Apply the final choice of mask
+			drawFormatBits(mask);  // Overwrite old format bits
+		}
 		return mask;  // The caller shall assign this value to the final-declared field
 	}
 	
@@ -793,12 +773,7 @@ public final class QrCode {
 	// Returns the product of the two given field elements modulo GF(2^8/0x11D). The arguments and result
 	// are unsigned 8-bit integers. This could be implemented as a lookup table of 256*256 entries of uint8.
 	private static @Unsigned int reedSolomonMultiply(@Unsigned int x, @Unsigned int y) {
-		//Signed operations not allowed on unsigned values
-		@SuppressWarnings("signedness")
-		int a=x >> 8;
-		@SuppressWarnings("signedness")
-		int b=y >> 8;
-		assert a >> 8 == 0 && b >> 8 == 0;
+		assert x >>> 8 == 0 && y >>> 8 == 0;
 		// Russian peasant multiplication
 		@Unsigned int z = 0;
 		for (int i = 7; i >= 0; i--) {

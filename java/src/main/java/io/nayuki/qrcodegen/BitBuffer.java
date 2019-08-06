@@ -27,6 +27,7 @@ import java.util.BitSet;
 import java.util.Objects;
 
 import org.checkerframework.checker.signedness.qual.*;
+import org.checkerframework.common.value.qual.*;
 
 /**
  * An appendable sequence of bits (0s and 1s). Mainly used by {@link QrSegment}.
