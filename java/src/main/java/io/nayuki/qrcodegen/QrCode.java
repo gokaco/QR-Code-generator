@@ -146,7 +146,6 @@ public final class QrCode {
 	public static QrCode encodeSegments(List<QrSegment> segs, Ecc ecl, int minVersion, int maxVersion, int mask, boolean boostEcl) {
 		Objects.requireNonNull(segs);
 		Objects.requireNonNull(ecl);
-
 		if (!(MIN_VERSION <= minVersion && minVersion <= maxVersion && maxVersion <= MAX_VERSION) || mask < -1 || mask > 7)
 			throw new IllegalArgumentException("Invalid value");
 		
