@@ -3,4 +3,4 @@ This branch contains the Annotated of QR-Code-generator using Signedness Checker
 Commands-
 
 cd QR-Code-generator/java/src/main/java
-mvn clean install
+mvn compile
